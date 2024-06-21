@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3>Bee eating flower. Drive the bee to eat the flower by pressing left, right, top and down key.</h3>
+<canvas id="gameCanvas" width="200" height="100"></canvas>
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set up game canvas size
+    canvas.width = 800;
+    canvas.height = 600;
+
+    // Set up bee variables
+    let beeX = 50;
+    let beeY = 50;
+    let beeSpeed = 5;
+
+    // Set up flowers
+    let flowers = [];
+
+    // Set up controls
+    let rightPressed = false;
+    let leftPressed = false;
+    let upPressed = false;
+    let downPressed = false;
+
+    document.addEventListener('keydown', keyDownHandler, false);
+    document.addEventListener('keyup', keyUpHandler, false);
+
+    function keyDownHandler(e) {
+        if (e.key == 'Right' || e.key == 'ArrowRight') {
+            rightPressed = true;
+        } else if (e.key == 'Left' || e.key == 'ArrowLeft') {
+            leftPressed = true;
+        }
+        if (e.key == 'Up' || e.key == 'ArrowUp') {
+            upPressed = true;
+        } else if (e.key == 'Down' || e.key == 'ArrowDown') {
+            downPressed = true;
+        }
+    }
+
+    function keyUpHandler(e) {
+        if (e.key == 'Right' || e.key == 'ArrowRight') {
+            rightPressed = false;
+        } else if (e.key == 'Left' || e.key == 'ArrowLeft') {
+            leftPressed = false;
+        }
+        if (e.key == 'Up' || e.key == 'ArrowUp') {
+            upPressed = false;
+        } else if (e.key == 'Down' || e.key == 'ArrowDown') {
+            downPressed = false;
+        }
+    }
+
+    // Set up game loop
+    function gameLoop() {
+// Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+// Update bee position
+        if (rightPressed) {
+            beeX += beeSpeed;
+        } else if (leftPressed) {
+            beeX -= beeSpeed;
+        }
+        if (upPressed) {
+            beeY -= beeSpeed;
+        } else if (downPressed) {
+            beeY += beeSpeed;
+        }
+
+// Draw bee
+        ctx.beginPath();
+        ctx.arc(beeX, beeY, 10, 0, Math.PI * 2);
+        ctx.fillStyle = 'yellow';
+        ctx.fill();
+        ctx.closePath();
+
+// Draw flowers
+        for (let i = 0; i < flowers.length; i++) {
+            ctx.beginPath();
+            ctx.arc(flowers[i].x, flowers[i].y, 10, 0, Math.PI * 2);
+            ctx.fillStyle = 'purple';
+            ctx.fill();
+            ctx.closePath();
+        }
+
+// Check for collision with flowers
+        for (let i = 0; i < flowers.length; i++) {
+            if (beeX > flowers[i].x - 10 && beeX < flowers[i].x + 10 && beeY > flowers[i].y - 10 && beeY < flowers[i].y + 10) {
+                flowers.splice(i, 1);
+            }
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+
+    // Set up flower generation
+    setInterval(function () {
+        flowers.push({
+            x: Math.floor(Math.random() * canvas.width),
+            y: Math.floor(Math.random() * canvas.height)
+        });
+    }, 1000);
+</script>
+</body>
+</html>
